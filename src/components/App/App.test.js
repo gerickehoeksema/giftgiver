@@ -7,24 +7,37 @@ import App from './App'
 
 configure({ adapter: new Adapter() });
 
-const app = shallow(<App />);
 
-it('renders correctly', () => {
-    expect(app.debug()).toMatchSnapshot();
-});
+describe('App', () => {
+    const app = shallow(<App />);
 
-it('initializes the `state` with an empty lifts of gifts', () => {
-    expect(app.state().gifts).toEqual([]);
-})
+    it('renders correctly', () => {
+        expect(app.debug()).toMatchSnapshot();
+    });
+    
+    it('initializes the `state` with an empty lifts of gifts', () => {
+        expect(app.state().gifts).toEqual([]);
+    })
 
-it('adds a new gift to `state` when clicking `add gift` button', () => {
-    app.find('.btn-add').simulate('click');
+    describe('when clicking the `add gift` button', () => {
+        beforeEach(()=>{
+            app.find('.btn-add').simulate('click');
+        })
 
-    expect(app.state().gifts).toEqual([{id: 1}])
-});
+        afterEach(() => {
+            app.setState({gifts:[]})
+        })
 
-it('adds a new gift to the rendered list when clicking `add gift` button', () => {
-    app.find('.btn-add').simulate('click');
+        it('adds a new gift to `state`', () => {
+            expect(app.state().gifts).toEqual([{id: 1}])
+        });
+        
+        it('adds a new gift to the rendered list', () => {
+            expect(app.find('.gift-list').children().length).toEqual(1);
+        })
 
-    expect(app.find('.gift-list').children().length).toEqual(2);
+        it('creates a Gift component', () => {
+            expect(app.find('Gift').exists()).toBe(true)
+        })
+    })    
 })
